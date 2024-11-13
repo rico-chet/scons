@@ -927,7 +927,7 @@ main()
 
     The <filename>site_scons</filename> directories give you a place to
     put &Python; modules and packages that you can import into your
-    &SConscript; files (at the top level)
+    &SConscript; files (at the top level),
     add-on tools that can integrate into &SCons;
     (in a <filename>site_tools</filename> subdirectory),
     and a <filename>site_scons/site_init.py</filename> file that

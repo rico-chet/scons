@@ -597,7 +597,7 @@ public class Example3
 
     <para>
 
-    Note that the the <command>javah</command> command was
+    Note that the <command>javah</command> command was
     removed from the JDK as of JDK 10, and the approved method
     (available since JDK 8) is to use <command>javac</command>
     to generate native headers at the same time as the Java source

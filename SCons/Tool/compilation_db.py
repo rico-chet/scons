@@ -60,6 +60,9 @@ class __CompilationDbNode(SCons.Node.Python.Value):
         SCons.Node.Python.Value.__init__(self, value)
         self.Decider(changed_since_last_build_node)
 
+    def __str__(self) -> str:
+        return str(self.value[0])
+
 
 def changed_since_last_build_node(child, target, prev_ni, node) -> bool:
     """ Dummy decider to force always building"""
