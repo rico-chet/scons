@@ -21,9 +21,9 @@ def VerifyCsig():
     csig = f1[0].get_csig()
     if hash_format == 'xxh32':
         assert csig == '1571daf1', csig
-    if hash_format == 'xxh64':
+    elif hash_format == 'xxh64':
         assert csig == 'f8a036ef9fe7a919', csig
-    if hash_format == 'xxh128':
+    elif hash_format == 'xxh128':
         assert csig == '0f0fe26f069108456902db34b226f929', csig
     elif hash_format == 'md5':
         assert csig == 'fe06ae4170d4fead2c958439c738859e', csig
