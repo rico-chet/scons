@@ -18,7 +18,7 @@ from .sctypes import to_bytes
 
 
 # Default hash function and format. SCons-internal.
-DEFAULT_HASH_FORMATS = ['md5', 'sha1', 'sha256']
+DEFAULT_HASH_FORMATS = ['xxh32', 'md5', 'sha1', 'sha256']
 ALLOWED_HASH_FORMATS = []
 _HASH_FUNCTION = None
 _HASH_FORMAT = None
@@ -113,6 +113,12 @@ def _set_allowed_viable_default_hashes(hashlib_used, sys_used=sys) -> None:
 
 
 _set_allowed_viable_default_hashes(hashlib)
+
+try:
+    import xxhash
+    _set_allowed_viable_default_hashes(xxhash)
+except ImportError:
+    pass
 
 
 def get_hash_format():
