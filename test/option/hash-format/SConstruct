@@ -19,7 +19,9 @@ f1 = env.B(target = 'f1.out', source = 'f1.in')
 
 def VerifyCsig():
     csig = f1[0].get_csig()
-    if hash_format == 'md5':
+    if hash_format == 'xxh32':
+        assert csig == '00000000000000000000000000000000', csig
+    elif hash_format == 'md5':
         assert csig == 'fe06ae4170d4fead2c958439c738859e', csig
     elif hash_format == 'sha1':
         assert csig == 'efe5c6daa743540e9561934e3e18628b336013f7', csig
