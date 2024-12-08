@@ -16,6 +16,14 @@ import sys
 
 from .sctypes import to_bytes
 
+_hash_libraries=[hashlib]
+
+try:
+    import xxhash
+    _hash_libraries += [xxhash]
+except ImportError:
+    pass
+
 
 # Default hash function and format. SCons-internal.
 DEFAULT_HASH_FORMATS = ['xxh128', 'md5', 'sha1', 'sha256']
@@ -45,7 +53,7 @@ def _attempt_init_of_python_3_9_hash_object(hash_function_object, hashlib_used, 
     if hash_function_object is None:
         return None
     if hashlib_used is not hashlib:
-        return hash_function_object
+        return hash_function_object()
 
     # https://stackoverflow.com/a/11887885 details how to check versions
     # with the "packaging" library. However, for our purposes, checking
@@ -116,14 +124,6 @@ def _set_allowed_viable_default_hashes(hashlibs_used, sys_used=sys) -> None:
             ) from _last_error
 
 
-_hash_libraries=[hashlib]
-
-try:
-    import xxhash
-    _hash_libraries += [xxhash]
-except ImportError:
-    pass
-
 _set_allowed_viable_default_hashes(_hash_libraries)
 
 def get_hash_format():
@@ -167,7 +167,7 @@ def set_hash_format(hash_format, hashlibs_used=_hash_libraries, sys_used=sys):
     an empty string, the default is determined by this function.
 
     Currently the default behavior is to use the first available format of
-    the following options: MD5, SHA1, SHA256.
+    the following options: xxhash, MD5, SHA1, SHA256.
     """
     global _HASH_FORMAT, _HASH_FUNCTION
 
@@ -296,18 +296,18 @@ def _get_hash_object(hash_format, hashlibs_used=_hash_libraries, sys_used=sys):
             )
         return [_attempt_init_of_python_3_9_hash_object(
             getattr(hashlib_used, _HASH_FUNCTION, None), hashlib_used, sys_used) for
-                hashlib_used in hashlibs_used if hasattr(hashlib_used, hash_format)][0]
+                hashlib_used in hashlibs_used if hasattr(hashlib_used, _HASH_FUNCTION)][0]
 
-    if True not in [hasattr(hashlib, hash_format)for hashlib_used in hashlibs_used ]:
+    if True not in [hasattr(hashlib, _HASH_FUNCTION) for hashlib_used in hashlibs_used]:
         from SCons.Errors import UserError  # pylint: disable=import-outside-toplevel
 
         raise UserError(
-            f'Hash format "{hash_format}" is not available in your Python interpreter.'
+            f'Hash format "{hash_format}" is not available in your Python libraries.'
         )
 
     return [_attempt_init_of_python_3_9_hash_object(
             getattr(hashlib_used, _HASH_FUNCTION, None), hashlib_used, sys_used) for
-                hashlib_used in hashlibs_used if hasattr(hashlib_used, hash_format)][0]
+                hashlib_used in hashlibs_used if hasattr(hashlib_used, _HASH_FUNCTION)][0]
 
 def hash_signature(s, hash_format=None):
     """
